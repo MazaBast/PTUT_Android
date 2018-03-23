@@ -1,6 +1,5 @@
 package com.example.mazan.projet5;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -9,19 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Message;
-import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.UUID;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static java.lang.Thread.sleep;
 
@@ -32,8 +27,8 @@ import static java.lang.Thread.sleep;
 
 public class principalactivity extends AppCompatActivity {
 
-    Chronometer simpleChronometer;
-    Button start, stop, restart, setFormat, clearFormat;
+    //Chronometer simpleChronometer;
+    //Button start, stop, restart, setFormat, clearFormat;
     int Tempsecoule;
     private Thread t;
     private boolean running = true;
@@ -42,6 +37,11 @@ public class principalactivity extends AppCompatActivity {
     private BluetoothDevice mmDevice;
     private BluetoothSocket mmSocket;
     boolean penible;
+    private String admac = "00:15:83:EA:74:36" ;
+
+
+
+    Switch Geofencing = (Switch) findViewById(R.id.switch1);
 
 
     @Override
@@ -50,9 +50,7 @@ public class principalactivity extends AppCompatActivity {
         setContentView(R.layout.principalactivity);
 
         // SWITCH GEOFENCING
-        Switch Geofencing = (Switch) findViewById(R.id.switch1);
-        final boolean switchstatus = (false);
-        Geofencing.setChecked(true);
+        Geofencing.setChecked(false);
 
         ImageButton aproposicon = (ImageButton) findViewById(R.id.aproposicon);
          aproposicon.setOnClickListener(new View.OnClickListener() {
@@ -78,8 +76,17 @@ public class principalactivity extends AppCompatActivity {
                                 Log.i("1", "" + i);
                                 TextView ShowTempsEcoule = (TextView) findViewById(R.id.ShowTempsEcoule);
                                 ShowTempsEcoule.setText(String.valueOf(i + 's'));
+                                Geofencing.setChecked(true);
 
                                 // traitement
+                                try {
+                                    sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else {
+                                Geofencing.setChecked(false);
                                 try {
                                     sleep(1000);
                                 } catch (InterruptedException e) {
@@ -95,15 +102,6 @@ public class principalactivity extends AppCompatActivity {
 
 
 
-        Geofencing.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-        if (switchstatus==(true))
-            simpleChronometer.start();
-        else
-            simpleChronometer.stop();
-
-        }
-    });
 
 
 
@@ -153,18 +151,26 @@ public class principalactivity extends AppCompatActivity {
 
                 }
                 // MAC : 00:15:83:EA:74:36
+                if(device.getAddress() == (admac)) {
+                    penible = true;
                     /*if(device.getUuids(). == (iud)) {
                     penible = true;
                 }*/
             }
         }
-    };
+    }};
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // Don't forget to unregister the ACTION_FOUND receiver.
         unregisterReceiver(mReceiver);
+
+       /* try {
+            URL url = new URL("http://192.168.43.65:8080/PTUT_PENIBILITE/webresources/generic/FinishWork?");
+            HttpURLConnection client = (HttpURLConnection) url.openConnection();
+//enter statements that can cause exceptions
+        }*/
     }
 }
 
@@ -173,6 +179,15 @@ public class principalactivity extends AppCompatActivity {
 
 
 
+ /*       Geofencing.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+        if (switchstatus==(true))
+            simpleChronometer.start();
+        else
+            simpleChronometer.stop();
+
+        }
+    }); */
 
 
 
@@ -223,7 +238,7 @@ public class principalactivity extends AppCompatActivity {
                  }); */
 // String formatType=simpleChronometer.getFormat(); servira lorsque je saurais quoi renvoyer
 
-/** final Intent intent3 = new Intent().setClass(this, apropos.class);
+/* final Intent intent3 = new Intent().setClass(this, apropos.class);
  // Then add the action to the button:
  ImageButton btnOtherActivity3 = (ImageButton) findViewById(R.id.aproposicon);
  btnOtherActivity3.setOnClickListener(new View.OnClickListener() {
